@@ -64,5 +64,45 @@ public class MessageCodecImplTest {
 		byte[] invalidData = null;
 		Assertions.assertThrows(IllegalArgumentException.class, () -> codec.decode(invalidData));
 	}
+		@Test
+	public void testValidKeyAndData() throws IllegalArgumentException, IOException {
+		byte[] encodedData = new byte[] {
+				// Signature
+				'S', 'i', 'n', 'c', 'h', 'E', 'n', 'c', 'o', 'd', 'i', 'n', 'g',
+				// Number of headers
+				1,
+				// Header 1: Name length, Name, Value length, Value
+				4, 'H', 'e', 'a', 'd', 5, 'V', 'a', 'l', 'u', 'e',
+				// Payload
+				1, 2, 3, 4 };
+
+		MessageCodecImpl codec = new MessageCodecImpl();
+		Message decodedMessage = codec.decode(encodedData);
+		assert decodedMessage.headers.size() == 1;
+		assert decodedMessage.headers.get("Head").equals("Value");
+		assert decodedMessage.payload.length == 4;
+		assert decodedMessage.payload[0] == 1;
+		assert decodedMessage.payload[1] == 2;
+		assert decodedMessage.payload[2] == 3;
+		assert decodedMessage.payload[3] == 4;
+	}
+
+	@Test
+	public void testInvalidKey() {
+
+		byte[] encodedData = new byte[] {
+				// Invalid signature
+				'I', 'n', 'v', 'a', 'l', 'i', 'd', 'S', 'i', 'g', 'n', 'a', 't', 'u', 'r', 'e',
+				// Number of headers
+				1,
+				// Header 1: Name length, Name, Value length, Value
+				4, 'H', 'e', 'a', 'd', 5, 'V', 'a', 'l', 'u', 'e',
+				// Payload
+				1, 2, 3, 4 };
+
+		MessageCodecImpl codec = new MessageCodecImpl();
+		Assertions.assertThrows(IllegalArgumentException.class, () -> codec.decode(encodedData));
+
+	}
 
 }
