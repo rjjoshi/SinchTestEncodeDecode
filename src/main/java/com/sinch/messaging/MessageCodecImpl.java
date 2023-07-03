@@ -49,7 +49,7 @@ public class MessageCodecImpl implements MessageCodec {
 	public Message decode(byte[] data) throws IllegalArgumentException, IOException {
 		validateData(data);
 		String signature = new String(data, 0, KEY.length(), StandardCharsets.US_ASCII);
-	    if (!signature.equals("SinchEncoding")) {
+	    if (!signature.equals(KEY)) {
 	        throw new IllegalArgumentException("Invalid data. Not encoded using this codec.");
 	    }
 		try (ByteArrayInputStream inputStream = new ByteArrayInputStream(data)) {
