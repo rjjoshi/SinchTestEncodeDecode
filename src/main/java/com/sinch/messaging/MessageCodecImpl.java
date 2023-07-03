@@ -68,8 +68,9 @@ public class MessageCodecImpl implements MessageCodec {
 				byte[] headerValueBytes = new byte[headerValueLength];
 				inputStream.read(headerValueBytes);
 				String headerValue = new String(headerValueBytes, StandardCharsets.US_ASCII);
+				validateHeaderValues(headerValue);
 				message.headers.put(headerName, headerValue);
-				validateHeaderValues(headerName);
+				
 			}
 
 			byte[] payload = new byte[inputStream.available()];
